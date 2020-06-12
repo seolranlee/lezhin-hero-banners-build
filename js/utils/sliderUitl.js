@@ -116,14 +116,14 @@ var sliderUtil = (function($) {
 
     var attachTouchEvent = function() {
       touchTarget.on("touchstart MSPointerDown pointerdown", onTouchStart);
-      touchTarget.on("touchmove MSPointerMove pointermove", onTouchMove);
-      touchTarget.on("touchend MSPointerUp pointerup", onTouchEnd);
+      $(window).on("touchmove MSPointerMove pointermove", onTouchMove);
+      $(window).on("touchend MSPointerUp pointerup", onTouchEnd);
     };
 
     var detachTouch = function() {
       touchTarget.off("touchstart MSPointerDown pointerdown", onTouchStart);
-      touchTarget.off("touchmove MSPointerMove pointermove", onTouchMove);
-      touchTarget.off("touchend MSPointerUp pointerup", onTouchEnd);
+      $(window).off("touchmove MSPointerMove pointermove", onTouchMove);
+      $(window).off("touchend MSPointerUp pointerup", onTouchEnd);
     };
 
     var moveSlide = function(moveDis, time) {
