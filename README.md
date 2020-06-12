@@ -1,1 +1,1 @@
-# lezhin-hero-banners-source
+# lezhin-hero-banners-build
