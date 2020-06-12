@@ -211,6 +211,14 @@ body main aside #hero-banner-list {
   margin: 0 auto;
 }
 
+body main aside #hero-banner-list * {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  -ms-user-select: none;
+      user-select: none;
+}
+
 body main aside #hero-banner-list .hero-slides {
   position: relative;
   overflow: hidden;
@@ -237,7 +245,6 @@ body main aside #hero-banner-list .hero-slides .loading img {
 
 body main aside #hero-banner-list .hero-slides .slider-wrap {
   overflow: hidden;
-  cursor: pointer;
   width: 30000px;
   font-size: 0;
 }
@@ -273,6 +280,7 @@ body main aside #hero-banner-list .navigation button {
   background-size: auto 100%;
   opacity: 0;
   filter: alpha(opacity=0);
+  cursor: pointer;
   -webkit-transition: opacity 0.2s ease-out;
   transition: opacity 0.2s ease-out;
 }
@@ -325,6 +333,9 @@ body main aside #hero-banner-list .indicator span.on {
     margin: 20px 0 50px;
     font-size: 18px;
     font-weight: 500;
+  }
+  body main aside #hero-banner-list .slider-wrap {
+    cursor: pointer;
   }
   body main aside #hero-banner-list .indicator {
     bottom: 3%;

@@ -91,6 +91,9 @@ var Page = (function() {
   var addEvent = function() {
     window.addEventListener("resize", onResize);
     onResize();
+    $(".h1-logo").on("click", function() {
+      window.location.reload();
+    });
   };
 
   var onResize = function() {
