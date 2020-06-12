@@ -83,7 +83,6 @@ var Page = (function() {
         slider = new sliderUtil({
           selector: $(".hero-slides>ul"),
           easing: "ease-out",
-          loop: false,
           currentDeviceType
         });
       });

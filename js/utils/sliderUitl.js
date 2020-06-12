@@ -182,6 +182,7 @@ var sliderUtil = (function($) {
       if (navigation) createNavigation();
       if (autoSlide) that.startAuto();
       that.attachEvent(currentDeviceType);
+      that.deviceTypeInit(currentDeviceType);
     };
     that.attachEvent = function(currentDeviceType) {
       sliderWidth = sliderWrap.width();
@@ -354,10 +355,7 @@ var sliderUtil = (function($) {
     that.stopAuto = function() {
       clearInterval(autoSliderId);
     };
-    that.sliderResize = function(currentDeviceType) {
-      sliderWidth = sliderWrap.parent().width();
-      selector.find("li").css("width", sliderWidth);
-      that.goToSlide(count + 1, 0);
+    that.deviceTypeInit = function(currentDeviceType) {
       if (currentDeviceType === "mobile") {
         attachTouchEvent();
         $(".navigation").css("display", "none");
@@ -365,6 +363,12 @@ var sliderUtil = (function($) {
         detachTouch();
         $(".navigation").css("display", "block");
       }
+    };
+    that.sliderResize = function(currentDeviceType) {
+      sliderWidth = sliderWrap.parent().width();
+      selector.find("li").css("width", sliderWidth);
+      that.goToSlide(count + 1, 0);
+      that.deviceTypeInit(currentDeviceType);
     };
 
     that.init();
