@@ -73,7 +73,7 @@ var Page = (function() {
                   <source media="(max-width: 639px)" srcset="${
                     mobileImages[index].image
                   }">
-                  <img src="${image.image}" alt="People">
+                  <img src="${image.image}" alt="banners">
               </picture>
             </li>`
           );
