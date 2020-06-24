@@ -1,12 +1,14 @@
 var Page = (function() {
   //   import axios from "axios";
-  var winW;
+  var winW = window.innerWidth || document.documentElement.clientWidth;
   var oldDeviceType;
   var currentDeviceType;
 
   var slider;
+  var desktopImages;
+  var mobileImages;
 
-  var canUseWebP = function() {
+  function canUseWebP() {
     var elem = document.createElement("canvas");
 
     if (!!(elem.getContext && elem.getContext("2d"))) {
@@ -16,10 +18,10 @@ var Page = (function() {
 
     // very old browser like IE 8, canvas not supported
     return false;
-  };
+  }
 
-  var getData = function(device, count) {
-    var url = `https://79f1529b-9999-4c7a-b478-ee9b5432084f.mock.pstmn.io/banners?device=${device}&count=${count}&webp=${canUseWebP()}`;
+  function fetchData(device, count) {
+    var url = `https://b6006523-3c2a-4b42-95fa-71d3dc4470c8.mock.pstmn.io/banners?device=${device}&count=${count}&webp=${canUseWebP()}`;
     var options = {
       method: "GET",
       headers: new Headers(),
@@ -29,7 +31,7 @@ var Page = (function() {
 
     var req = new Request(url, options);
 
-    return new Promise(function(resolve, reject) {
+    return new Promise(function(resolve) {
       fetch(req)
         .then(response => {
           return response.json();
@@ -38,26 +40,18 @@ var Page = (function() {
           resolve(data);
         });
     });
-  };
+  }
 
-  /*=========================================================== [ addevent ] =======================================================================*/
-  var checkResponsiveType = function() {
-    winW = window.innerWidth || document.documentElement.clientWidth;
-    oldDeviceType = currentDeviceType;
-
+  function checkResponsiveType(winW) {
     if (winW <= 640) {
-      currentDeviceType = "mobile";
-    } else {
-      currentDeviceType = "desktop";
+      return "mobile";
     }
-  };
+    return "desktop";
+  }
 
-  var render = function() {
-    var desktopImages;
-    var mobileImages;
-    // promise all
-    var desktopPromise = getData("desktop", 4);
-    var mobilePromise = getData("mobile", 4);
+  function getData() {
+    var desktopPromise = fetchData("desktop", 4);
+    var mobilePromise = fetchData("mobile", 4);
 
     Promise.all([desktopPromise, mobilePromise])
       .then(datas => {
@@ -65,19 +59,7 @@ var Page = (function() {
         mobileImages = datas[1];
       })
       .then(function() {
-        $(".hero-slides").html("<ul></ul>");
-        desktopImages.forEach((image, index) => {
-          $(".hero-slides>ul").append(
-            `<li class="slide-${index + 1}">
-              <picture class="banner-image">
-                  <source media="(max-width: 639px)" srcset="${
-                    mobileImages[index].image
-                  }">
-                  <img src="${image.image}" alt="banners">
-              </picture>
-            </li>`
-          );
-        });
+        render();
       })
       .then(function() {
         slider = new sliderUtil({
@@ -86,41 +68,52 @@ var Page = (function() {
           currentDeviceType
         });
       });
-  };
+  }
 
-  var addEvent = function() {
+  function render() {
+    $(".loading").css("display", "none");
+    $(".hero-slides").html(`<ul class="slider-wrap"></ul>`);
+    desktopImages.forEach((image, index) => {
+      $(".hero-slides>ul").append(
+        `<li class="slide-list slide-${index + 1}">
+              <picture class="banner-image">
+                  <source media="(max-width: 640px)" srcset="${
+                    mobileImages[index].image
+                  }">
+                  <img src="${image.image}" alt="banners">
+              </picture>
+            </li>`
+      );
+    });
+  }
+
+  function onResize() {
+    winW = window.innerWidth;
+    oldDeviceType = currentDeviceType;
+    currentDeviceType = checkResponsiveType(winW);
+    if (slider) {
+      slider.sliderResize(oldDeviceType, currentDeviceType);
+    }
+  }
+
+  function addEvent() {
     window.addEventListener("resize", onResize);
     onResize();
-    $(".h1-logo").on("click", function() {
-      window.location.reload();
-    });
-  };
-
-  var onResize = function() {
-    winW = window.innerWidth;
-    winH = window.innerHeight;
-    checkResponsiveType();
-    if (slider) slider.sliderResize(currentDeviceType);
-  };
+  }
 
   /*=========================================================== [ init ] =======================================================================*/
-  var _init = function() {};
 
-  var _load_init = function() {
+  function _init() {
     addEvent();
-    render();
-  };
+    getData();
+  }
   return {
-    init: _init,
-    load_init: _load_init
+    init: _init
   };
 })();
 
 /*=========================================================== [ ready / load ] =======================================================================*/
 
-$(window).on("ready", function() {
-  Page.init();
-});
 $(window).on("load", function() {
-  Page.load_init();
+  Page.init();
 });

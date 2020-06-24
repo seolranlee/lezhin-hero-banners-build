@@ -26,7 +26,7 @@ var sliderUtil = (function($) {
     var currentDeviceType = that.settings.currentDeviceType;
 
     var sliderWrap = selector.parent();
-    var sliderWidth = sliderWrap.width();
+    var sliderWidth = sliderWrap.parent().width();
     var numbers = selector.find("li").length;
 
     var count = 0;
@@ -35,24 +35,18 @@ var sliderUtil = (function($) {
     //tocuhEvent
     var touchTarget = selector;
     var isTouchStart = false;
-    var sx,
-      sy,
-      dx,
-      dy,
-      ox = 0,
-      oy = 0;
-
+    var sx, sy, dx, dy;
     var sensitiveX = 40;
 
     //터치관련
-    var onTouchStart = function(e) {
+    function onTouchStart(e) {
       if (isTouchStart || count >= numbers || count < 0) return;
-
       var orig = e.originalEvent,
         touchPoints =
           typeof orig.changedTouches !== "undefined"
             ? orig.changedTouches
             : [orig];
+
       var chromePointerEvents = typeof PointerEvent === "function";
       if (chromePointerEvents) {
         if (orig.pointerId === undefined) {
@@ -65,15 +59,12 @@ var sliderUtil = (function($) {
       }
 
       isTouchStart = true;
-
+      // startX, startY(시작점)
       sx = touchPoints[0].pageX;
       sy = touchPoints[0].pageY;
+    }
 
-      dx = ox;
-      dy = oy;
-    };
-
-    var onTouchMove = function(e) {
+    function onTouchMove(e) {
       if (isTouchStart) {
         var orig = e.originalEvent,
           touchPoints =
@@ -81,60 +72,67 @@ var sliderUtil = (function($) {
               ? orig.changedTouches
               : [orig];
 
-        dx = touchPoints[0].pageX - sx + ox;
-        dy = touchPoints[0].pageY - sy + oy;
-
+        dx = touchPoints[0].pageX - sx;
+        dy = touchPoints[0].pageY - sy;
         if (loop) {
           deltaX = -(sliderWidth * (count + 1) - dx);
         } else {
           deltaX = -(sliderWidth * count - dx);
         }
 
+        // 가로로 스와이프 한 거리가 세로로 스와이프 한 거리보다 클 때에만 스와이퍼 이벤트로 간주한다.
         if (Math.abs(dx) > Math.abs(dy) && e.cancelable) {
+          // 본래 가지는 scrolling 이벤트 취소
           e.preventDefault();
-          e.stopPropagation();
+          // e.stopPropagation();
           selector.css({
-            "-webkit-transform": `translateX(${deltaX}px)`,
+            "-webkit-transform": `translate3d(${deltaX}px, 0, 0)`,
+            transform: `translate3d(${deltaX}px, 0, 0)`,
             transition: "all ease-out 0s"
           });
         }
       }
-    };
+    }
 
-    var onTouchEnd = function(e) {
+    function onTouchEnd() {
       if (isTouchStart) {
         if (dx > sensitiveX) that.movePrev();
         else if (dx < -sensitiveX) that.moveNext();
+        // 셋팅해준 민감도(sensitiveX)보다 적게 이동했을 때에는 슬라이드 이동을 하지 않는다.
         else that.goToSlide(count + 1);
 
+        // loop 옵이 false일 경우: 첫번째 장이나 마지막 장일 때에 대한 처리
         if ((!loop && count + 1 >= numbers) || (!loop && count <= 0))
           that.goToSlide(count + 1);
 
+        // 터치이벤트 초기화
         isTouchStart = false;
       }
-    };
+    }
 
-    var attachTouchEvent = function() {
+    function addTouchEvent() {
       touchTarget.on("touchstart MSPointerDown pointerdown", onTouchStart);
       $(window).on("touchmove MSPointerMove pointermove", onTouchMove);
       $(window).on("touchend MSPointerUp pointerup", onTouchEnd);
-    };
+    }
 
-    var detachTouch = function() {
+    function removeTouchEvent() {
       touchTarget.off("touchstart MSPointerDown pointerdown", onTouchStart);
       $(window).off("touchmove MSPointerMove pointermove", onTouchMove);
       $(window).off("touchend MSPointerUp pointerup", onTouchEnd);
-    };
+    }
 
-    var moveSlide = function(moveDis, time) {
+    function moveSlide(moveDis, time) {
+      // time: transition duration을 가지고 움직여야 할 경우와(인디게이터, 네비게이터, 스와이퍼로 이동할 경우) 그렇지 않은 경우가 나뉘어져 있기 때문에(리사이징 시 슬라이드 위치 재조정 시) 옵션으로 가질 수 있게 파라미터로 넣어준다.
       if (time === undefined) time = duration;
       selector.css({
-        "-webkit-transform": `translateX(-${moveDis}px)`,
+        "-webkit-transform": `translate3d(-${moveDis}px, 0, 0)`,
+        transform: `translate3d(-${moveDis}px, 0, 0)`,
         transition: `all ${easing} ${time / 1000}s`
       });
-    };
+    }
 
-    var cloning = function() {
+    function cloning() {
       var appendClone = selector
         .find("li:first-child")
         .clone()
@@ -144,8 +142,9 @@ var sliderUtil = (function($) {
         .clone()
         .addClass("clone");
       selector.append(appendClone).prepend(preClone);
-    };
-    var createIndicator = function() {
+    }
+
+    function createIndicator() {
       var pageEl = $(`<div class="indicator"></div>`);
       for (var i = 0; i < numbers; i++) {
         if (i === 0) {
@@ -155,8 +154,9 @@ var sliderUtil = (function($) {
         }
       }
       sliderWrap.append(pageEl);
-    };
-    var createNavigation = function() {
+    }
+
+    function createNavigation() {
       var navEl = $(
         `
         <div class="navigation">
@@ -166,28 +166,39 @@ var sliderUtil = (function($) {
         `
       );
       sliderWrap.append(navEl);
-    };
+    }
+
+    function deviceTypeDetect(currentDeviceType) {
+      if (currentDeviceType === "mobile") {
+        addTouchEvent();
+        $(".navigation").css("display", "none");
+      } else {
+        removeTouchEvent();
+        $(".navigation").css("display", "block");
+      }
+    }
 
     /*================================================== [ method ] ==========================================================*/
 
     that.init = function() {
-      selector.addClass("slider-wrap");
+      // 공통 init
       selector.find("li").css("width", sliderWidth);
       if (loop) {
         cloning();
-        // 초기 위치 재설정
+        // 초기 위치 재설정(클로닝때문에)
         moveSlide(sliderWidth, 0);
       }
       if (indicator) createIndicator();
       if (navigation) createNavigation();
       if (autoSlide) that.startAuto();
-      that.attachEvent(currentDeviceType);
-      that.deviceTypeInit(currentDeviceType);
-    };
-    that.attachEvent = function() {
-      sliderWidth = sliderWrap.width();
-      selector.find("li").css("width", sliderWidth);
+      that.addEvent();
 
+      // devicetype에 따라 다르게 분기되는 init or devicetype이 바뀔때마다 재 설정되어야 하는 init
+      deviceTypeDetect(currentDeviceType);
+    };
+
+    that.addEvent = function() {
+      // navigation event
       sliderWrap.find(".navPrev").on("click", function(e) {
         that.movePrev(e);
       });
@@ -196,16 +207,18 @@ var sliderUtil = (function($) {
         that.moveNext(e);
       });
 
+      // indicator event
       sliderWrap.find(".indicator span").on("click", function(e) {
         e.preventDefault();
         var idx = $(this).index() + 1;
         that.goToSlide(idx);
       });
     };
+
     that.moveNext = function(event) {
       if (event) {
-        event.stopPropagation();
-        event.preventDefault();
+        // event.stopPropagation();
+        // event.preventDefault();
         var target = event.target;
         selector.bind(
           "transitionend webkitTransitionEnd oTransitionEnd MSTransitionEnd",
@@ -271,10 +284,11 @@ var sliderUtil = (function($) {
           .addClass("on");
       }
     };
+
     that.movePrev = function(event) {
       if (event) {
-        event.stopPropagation();
-        event.preventDefault();
+        // event.stopPropagation();
+        // event.preventDefault();
         var target = event.target;
         selector.bind(
           "transitionend webkitTransitionEnd oTransitionEnd MSTransitionEnd",
@@ -327,6 +341,7 @@ var sliderUtil = (function($) {
           .addClass("on");
       }
     };
+
     that.goToSlide = function(page, time) {
       if (time === undefined) time = duration;
       var idx = page - 1;
@@ -343,34 +358,30 @@ var sliderUtil = (function($) {
         moveSlide(sliderWidth * count, time);
       }
     };
+
     that.startAuto = function() {
       autoSliderId = setInterval(function() {
         if (!loop && count >= numbers - 1) return false;
         that.moveNext();
       }, speed);
     };
+
     that.stopAuto = function() {
       clearInterval(autoSliderId);
     };
-    that.deviceTypeInit = function(currentDeviceType) {
-      if (currentDeviceType === "mobile") {
-        attachTouchEvent();
-        $(".navigation").css("display", "none");
-      } else {
-        detachTouch();
-        $(".navigation").css("display", "block");
-      }
-    };
-    that.sliderResize = function(currentDeviceType) {
+
+    that.sliderResize = function(oldDeviceType, currentDeviceType) {
       sliderWidth = sliderWrap.parent().width();
       selector.find("li").css("width", sliderWidth);
       that.goToSlide(count + 1, 0);
-      that.deviceTypeInit(currentDeviceType);
+      if (oldDeviceType !== currentDeviceType)
+        deviceTypeDetect(currentDeviceType);
     };
 
     that.init();
 
     return that;
   };
+
   return sliderUtil;
 })(jQuery);
