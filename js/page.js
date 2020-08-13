@@ -106,11 +106,6 @@ var Page = (function() {
   function _init() {
     addEvent();
     getData();
-    jQuery.event.special.touchstart = {
-      setup: function( _, ns, handle ) {
-          this.addEventListener("touchstart", handle, { passive: !ns.includes("noPreventDefault") });
-      }
-    };
   }
   return {
     init: _init
