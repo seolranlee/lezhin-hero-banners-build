@@ -1,20 +1,13 @@
-jQuery.event.special.touchstart = {
+jQuery.event.special.touch = {
   setup: function( _, ns, handle ) {
-      this.addEventListener("touchstart", handle, {passive: true});
+      this.addEventListener("touch", handle, {passive: true});
       return false
   }
 };
 
-jQuery.event.special.touchmove = {
+jQuery.event.special.wheel = {
   setup: function( _, ns, handle ) {
-      this.addEventListener("touchmove", handle, {passive: true});
-      return false
-  }
-};
-
-jQuery.event.special.touchend = {
-  setup: function( _, ns, handle ) {
-      this.addEventListener("touchend", handle, {passive: true});
+      this.addEventListener("wheel", handle, {passive: true});
       return false
   }
 };
