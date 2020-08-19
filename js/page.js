@@ -115,9 +115,9 @@ var Page = (function() {
 /*=========================================================== [ ready / load ] =======================================================================*/
 
 $(window).on("load", function() {
-  jQuery.event.special.touchstart = {
+  jQuery.event.special.touchmove = {
     setup: function( _, ns, handle ) {
-        this.addEventListener("touchstart", handle, { passive: !ns.includes("noPreventDefault") });
+        this.addEventListener("touchmove", handle, { passive: !ns.includes("noPreventDefault") });
     }
   };
   Page.init();
