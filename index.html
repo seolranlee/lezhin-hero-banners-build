@@ -43,6 +43,20 @@
   <script type="text/javascript" src="./js/utils/sliderUitl.js"></script>
   <script type="text/javascript" src="js/page.js"></script>
   <script>
+    var addEventListener_orig = EventTarget.prototype.addEventListener;
+    EventTarget.prototype.addEventListener = function (type, handler, opts_orig) {
+      var opts;
+      if (opts_orig === false || opts_orig === true)
+        opts = { capture: opts_orig, passive: false };
+      else if (!(opts_orig && opts_orig.constructor == Object))
+        opts = { passive: false };
+      else
+        opts = opts_orig;
+
+      arguments[2] = opts;
+      return addEventListener_orig.apply(this, arguments);
+    };
+
     document.getElementById('drag').addEventListener('touchstart', () => {
       console.log('touchstart')
     })
