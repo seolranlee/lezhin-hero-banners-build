@@ -63,9 +63,7 @@
       return supportsPassiveOption
     }
 
-
-
-    document.getElementById('drag').addEventListener("touchstart", () => { console.log('touchstart') });
+    document.getElementById('drag').addEventListener("touchstart", () => { console.log('touchstart') }, isPassive() ? { passive: true } : false);
     window.addEventListener("wheel", () => { console.log('wheel') });
   </script>
 </body>
