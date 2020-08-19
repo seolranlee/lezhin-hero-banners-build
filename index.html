@@ -43,8 +43,9 @@
   <script type="text/javascript" src="./js/utils/sliderUitl.js"></script>
   <script type="text/javascript" src="js/page.js"></script>
   <script>
-    var addEventListener_orig = EventTarget.prototype.addEventListener;
-    EventTarget.prototype.addEventListener = function (type, handler, opts_orig) {
+    const target = document.getElementById('drag')
+    var addEventListener_orig = target.prototype.addEventListener;
+    target.prototype.addEventListener = function (type, handler, opts_orig) {
       var opts;
       if (opts_orig === false || opts_orig === true)
         opts = { capture: opts_orig, passive: false };
