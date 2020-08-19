@@ -32,6 +32,7 @@ var sliderUtil = (function($) {
     var count = 0;
     var autoSliderId;
 
+
     //tocuhEvent
     var touchTarget = selector;
     var isTouchStart = false;
@@ -114,6 +115,7 @@ var sliderUtil = (function($) {
       touchTarget.on("touchstart MSPointerDown pointerdown", onTouchStart);
       $(window).on("touchmove MSPointerMove pointermove", onTouchMove);
       $(window).on("touchend MSPointerUp pointerup", onTouchEnd);
+
     }
 
     function removeTouchEvent() {
