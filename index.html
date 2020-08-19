@@ -43,24 +43,29 @@
   <script type="text/javascript" src="./js/utils/sliderUitl.js"></script>
   <script type="text/javascript" src="js/page.js"></script>
   <script>
-    const target = document.getElementById('drag')
-    var addEventListener_orig = target.prototype.addEventListener;
-    target.prototype.addEventListener = function (type, handler, opts_orig) {
-      var opts;
-      if (opts_orig === false || opts_orig === true)
-        opts = { capture: opts_orig, passive: false };
-      else if (!(opts_orig && opts_orig.constructor == Object))
-        opts = { passive: false };
-      else
-        opts = opts_orig;
+    var isIE11 = !!window.MSInputMethodContext && !!document.documentMode;
 
-      arguments[2] = opts;
-      return addEventListener_orig.apply(this, arguments);
-    };
+    console.log('isIE11:', isIE11)
 
-    document.getElementById('drag').addEventListener('touchstart', () => {
-      console.log('touchstart')
-    })
+    var passiveSupported = isIE11;
+
+    try {
+      var options = {
+        get passive() { // This function will be called when the browser
+          //     attempts to access the passive property.
+          passiveSupported = true;
+        }
+      };
+
+      window.addEventListener("test", options, options);
+      window.removeEventListener("test", options, options);
+    } catch (err) {
+      passiveSupported = false;
+    }
+
+
+    document.getElementById('drag').addEventListener("touchstart", () => { console.log('touchstart') }, passiveSupported
+      ? { passive: true } : false);
   </script>
 </body>
 
