@@ -47,24 +47,26 @@
 
     console.log('isIE11:', isIE11)
 
-    var passiveSupported = isIE11;
-
-    try {
-      var options = {
-        get passive() { // This function will be called when the browser
-          //     attempts to access the passive property.
-          passiveSupported = true;
-        }
-      };
-
-      window.addEventListener("test", options, options);
-      window.removeEventListener("test", options, options);
-    } catch (err) {
-      passiveSupported = false;
+    function isPassive() {
+      var supportsPassiveOption = false
+      try {
+        addEventListener(
+          'test',
+          null,
+          Object.defineProperty({}, 'passive', {
+            get: () => {
+              supportsPassiveOption = true
+            }
+          })
+        )
+      } catch (e) { }
+      return supportsPassiveOption
     }
 
 
+
     document.getElementById('drag').addEventListener("touchstart", () => { console.log('touchstart') });
+    window.addEventListener("wheel", () => { console.log('wheel') });
   </script>
 </body>
 
