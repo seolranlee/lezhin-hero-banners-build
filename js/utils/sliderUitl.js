@@ -39,6 +39,12 @@ var sliderUtil = (function($) {
     var sx, sy, dx, dy;
     var sensitiveX = 40;
 
+    var passiveIfSupported = false;
+
+  try {
+    window.addEventListener("test", null, Object.defineProperty({}, "passive", { get: function() { passiveIfSupported = { passive: true }; } }));
+  } catch(err) {}
+
     //터치관련
     function onTouchStart(e) {
       if (isTouchStart || count >= numbers || count < 0) return;
@@ -116,9 +122,9 @@ var sliderUtil = (function($) {
       // $(window).on("touchmove MSPointerMove pointermove", onTouchMove);
       // $(window).on("touchend MSPointerUp pointerup", onTouchEnd);
 
-      touchTarget.addEventListener('touchstart', ()=>{console.log('touchstart')})
-      window.addEventListener('touchmove', ()=>{console.log('touchmove')})
-      window.addEventListener('touchend', ()=>{console.log('touchend')})
+      touchTarget.addEventListener('touchstart', ()=>{console.log('touchstart')}, passiveIfSupported)
+      window.addEventListener('touchmove', ()=>{console.log('touchmove')}, passiveIfSupported)
+      window.addEventListener('touchend', ()=>{console.log('touchend')}, passiveIfSupported)
 
     }
 

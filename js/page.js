@@ -116,18 +116,14 @@ var Page = (function() {
 
 $(window).on("load", function() {
   /* Feature detection */
-  // var passiveIfSupported = false;
-
-  // try {
-  //   window.addEventListener("test", null, Object.defineProperty({}, "passive", { get: function() { passiveIfSupported = { passive: true }; } }));
-  // } catch(err) {}
+  
 
   // window.addEventListener('scroll', function(event) {
   //   /* do something */
   //   // can't use event.preventDefault();
   // }, passiveIfSupported );
 
-  
+
   // jQuery.event.special.touchstart = {
   //   setup: function( _, ns, handle ) {
   //       this.addEventListener("touchstart", handle, { passive: !ns.includes("noPreventDefault") });
