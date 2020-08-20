@@ -72,7 +72,7 @@ var Page = (function() {
 
   function render() {
     $(".loading").css("display", "none");
-    $(".hero-slides").html(`<ul class="slider-wrap"></ul>`);
+    $(".hero-slides").html(`<ul id="sliderWrapper" class="slider-wrap"></ul>`);
     desktopImages.forEach((image, index) => {
       $(".hero-slides>ul").append(
         `<li class="slide-list slide-${index + 1}">
@@ -116,16 +116,18 @@ var Page = (function() {
 
 $(window).on("load", function() {
   /* Feature detection */
-  var passiveIfSupported = false;
+  // var passiveIfSupported = false;
 
-  try {
-    window.addEventListener("test", null, Object.defineProperty({}, "passive", { get: function() { passiveIfSupported = { passive: true }; } }));
-  } catch(err) {}
+  // try {
+  //   window.addEventListener("test", null, Object.defineProperty({}, "passive", { get: function() { passiveIfSupported = { passive: true }; } }));
+  // } catch(err) {}
 
-  window.addEventListener('scroll', function(event) {
-    /* do something */
-    // can't use event.preventDefault();
-  }, passiveIfSupported );
+  // window.addEventListener('scroll', function(event) {
+  //   /* do something */
+  //   // can't use event.preventDefault();
+  // }, passiveIfSupported );
+
+  
   // jQuery.event.special.touchstart = {
   //   setup: function( _, ns, handle ) {
   //       this.addEventListener("touchstart", handle, { passive: !ns.includes("noPreventDefault") });

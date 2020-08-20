@@ -33,8 +33,8 @@ var sliderUtil = (function($) {
     var autoSliderId;
 
 
-    //tocuhEvent
-    var touchTarget = selector;
+    //touchEvent
+    var touchTarget = document.getElementById('sliderWrapper');
     var isTouchStart = false;
     var sx, sy, dx, dy;
     var sensitiveX = 40;
@@ -112,16 +112,24 @@ var sliderUtil = (function($) {
     }
 
     function addTouchEvent() {
-      touchTarget.on("touchstart MSPointerDown pointerdown", onTouchStart);
-      $(window).on("touchmove MSPointerMove pointermove", onTouchMove);
-      $(window).on("touchend MSPointerUp pointerup", onTouchEnd);
+      // touchTarget.on("touchstart MSPointerDown pointerdown", onTouchStart);
+      // $(window).on("touchmove MSPointerMove pointermove", onTouchMove);
+      // $(window).on("touchend MSPointerUp pointerup", onTouchEnd);
+
+      touchTarget.addEventListener('touchstart', ()=>{console.log('touchstart')})
+      window.addEventListener('touchmove', ()=>{console.log('touchmove')})
+      window.addEventListener('touchend', ()=>{console.log('touchend')})
 
     }
 
     function removeTouchEvent() {
-      touchTarget.off("touchstart MSPointerDown pointerdown", onTouchStart);
-      $(window).off("touchmove MSPointerMove pointermove", onTouchMove);
-      $(window).off("touchend MSPointerUp pointerup", onTouchEnd);
+      // touchTarget.off("touchstart MSPointerDown pointerdown", onTouchStart);
+      // $(window).off("touchmove MSPointerMove pointermove", onTouchMove);
+      // $(window).off("touchend MSPointerUp pointerup", onTouchEnd);
+
+      // touchTarget.removeEventListener('touchstart', onTouchStart)
+      // window.removeEventListener('touchmove', onTouchMove)
+      // window.removeEventListener('touchend', onTouchEnd)
     }
 
     function moveSlide(moveDis, time) {
