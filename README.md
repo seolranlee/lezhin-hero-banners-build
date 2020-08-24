@@ -225,7 +225,7 @@ var slider = new sliderUtil({
 
 - Postman 을 사용하여 mock Server를 통해 API 구현.
 
-  - get https://79f1529b-9999-4c7a-b478-ee9b5432084f.mock.pstmn.io/banners?device=${device}&count=${count}&webp=${canUseWebP()}
+  - get https://b6006523-3c2a-4b42-95fa-71d3dc4470c8.mock.pstmn.io/banners?device=${device}&count=${count}&webp=${canUseWebP()}
 
 - 앱이 구동되는 브라우저의 webp 지원 여부를 boolean값으로 반환하는 canUseWebP 함수를 구현하여 false로 반환되면 .jpg 확장자의 image url을 지닌 api를 호출, true로 반환되면 .webp 확장자의 image url을 지닌 api를 호출 하는 형태로 구현.
 
